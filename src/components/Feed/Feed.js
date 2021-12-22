@@ -1,27 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import './Feed.css'
 import StoryReel from './StoryReel'
 import MessageSender from '../MessageSender/MessageSender'
-import './Feed.css'
 import Post from './Post'
+import { useStateValue } from '../StateProvider/StateProvider'
+import db from '../../firebase';
 
 const Feed = () => {
+  const [{ user }, dispatch] = useStateValue();
+  const [posts, setPosts] = useState();
+
+  useEffect(() => {
+    db.collection('posts').onSnapshot((snapshot) =>
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))));
+  }, [])
+
   return (
     <div className='feed'>
       <StoryReel />
       <MessageSender />
       {/* <Post key={id} profilePic={profilePic} message={message} timestamp={timestamp} username={username} image={image} /> */}
-      <Post 
-      profilePic={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_vs_k5NOVwYHvlV8obHSPjsmlQG-6BLI5-Q&usqp=CAU'} 
-      message={'New Post is Here'} 
-      timestamp={'This is a timestamp'} 
-      username={'AminArshadi'} 
-      image={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNu5wnDZDHVNdpRUeND2y8XaVqWogoVk2xsf2zBsjEzvJLzHR6Ow6iwo95d3foYrGcs8E&usqp=CAU'} />
-      <Post 
-      profilePic={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_vs_k5NOVwYHvlV8obHSPjsmlQG-6BLI5-Q&usqp=CAU'} 
-      message={'Second post with no image is Here...'} 
-      timestamp={'This is a timestamp'} 
-      username={'AminArshadi'} 
-      image={null} />
+
+      {posts && posts.map(post => (
+
+        <Post
+          key={post.data.id}
+          profilePic={post.data.profilePic}
+          message={post.data.message}
+          timestamp={post.data.timestamp}
+          username={post.data.username}
+          image={post.data.image} />
+          )
+        )
+      }
+
     </div>
   )
 }
