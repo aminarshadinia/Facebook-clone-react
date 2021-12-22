@@ -5,10 +5,12 @@ import Header from './components/Header/Header';
 import Login from './components/Login/Login';
 import Sidebar from './components/Sidebar/Sidebar'
 import Widgets from './components/Widgets/Widgets';
+import { useStateValue } from './components/StateProvider/StateProvider';
+import { Container } from '@material-ui/core';
 
 
 function App() {
-  const user = '';
+  const [{user} , dispatch] = useStateValue();
 
   return (
     <div className="app">
@@ -17,7 +19,9 @@ function App() {
           <Header />
           <div className='app__body'>
             <Sidebar />
+            <Container>
             <Feed />
+            </Container>
             <Widgets />
           </div>
         </Fragment>
